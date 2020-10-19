@@ -1,7 +1,7 @@
 Package: blapsr
 Type: Package
 Title: Bayesian Inference with Laplace Approximations and P-Splines
-Version: 0.5.1
+Version: 0.5.5
 Depends: R (>= 3.6.0), survival (>= 2.44.1)
 Authors@R: c(person("Oswaldo","Gressani", email="oswaldo_gressani@hotmail.fr",
                   role=c("aut","cre"), comment = "Author"),
@@ -13,9 +13,9 @@ Description: Laplace approximations and penalized B-splines are combined
     used to fit survival models, especially proportional hazards and promotion 
     time cure models (Gressani, O. and Lambert, P. (2018) 
     <doi:10.1016/j.csda.2018.02.007>). The Laplace-P-spline methodology can also
-    be implemented for inference in additive and generalized additive models
-    (Gressani, O. and Lambert, P. (2020) <arXiv:2003.07214>). See the associated
-    website for more information and examples.
+    be implemented for inference in (generalized) additive models
+    (Gressani, O. and Lambert, P. (2021) <doi:10.1016/j.csda.2020.107088>).
+    See the associated website for more information and examples.
 URL: <https://www.blapsr-project.org/>
 License: GPL-3
 Encoding: UTF-8
@@ -27,8 +27,8 @@ Imports: coda (>= 0.19.3), graphics(>= 3.6.0), MASS (>= 7.3.51), Matrix
 Suggests: knitr (>= 1.26), rmarkdown (>= 1.14), testthat (>= 2.3.1)
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-07-13 11:24:50 UTC; oswal
+Packaged: 2020-10-19 09:27:47 UTC; Oswaldo1989
 Author: Oswaldo Gressani [aut, cre] (Author),
   Philippe Lambert [aut, ths] (Co-author and thesis advisor)
 Repository: CRAN
-Date/Publication: 2020-07-13 17:00:10 UTC
+Date/Publication: 2020-10-19 09:50:05 UTC

@@ -123,23 +123,28 @@ gamlps <- function(formula, data, K = 30, family = c("gaussian", "poisson",
   if(missing(data)) {
     mf <- stats::model.frame(formula) # Extract model frame from formula
     X  <- stats::model.matrix(mf)     # Full design matrix
+    colXnames <- colnames(X)
     smterms <- grepl("sm(", colnames(X), fixed = TRUE)
     X <- cbind(X[, as.logical(1 - smterms)], X[, smterms])
+    colnames(X) <- colXnames
   } else{
     mf <- stats::model.frame(formula, data = data)
     X <- stats::model.matrix(mf, data = data)
+    colXnames <- colnames(X)
     smterms <- grepl("sm(", colnames(X), fixed = TRUE)
     X <- cbind(X[, as.logical(1 - smterms)], X[, smterms])
+    colnames(X) <- colXnames
   }
   if(any(is.infinite(X)))
     stop("Covariates contain Inf values")
-  q  <- sum(grepl("sm(", colnames(X), fixed = TRUE)) # Number of smooth terms in model
+  q  <- sum(smterms) # Number of smooth terms in model
   if(q == 0)
     stop("Model does not contain any smooth terms")
   p  <- ncol(X) - q # Number of regression coefficients in linear part
   n  <- nrow(X)     # Sample size
   Z  <- scale(X[, 1:p], center = TRUE, scale = FALSE)  # Centered Z matrix
   Z[, 1] <- rep(1, n) # Column for intercept
+  if(ncol(Z)==1) colnames(Z) <- "(Intercept)"
   y  <- as.numeric(stats::model.extract(mf, "response")) # Response vector
   if(any(is.infinite(y)) || any(is.na(y)))
     stop("Response contains Inf, NA or NaN values")
@@ -195,7 +200,7 @@ gamlps <- function(formula, data, K = 30, family = c("gaussian", "poisson",
   B <- cbind(Z, do.call(cbind, B.list.trim)) # Design matrix ncol: q * (K-1) + p
   H <- p + (q * (K - 1))  # Latent field dimension
   if(n < H)
-    stop("Number of coefficients to be estimated is larger than sample size")
+    warning("Number of coefficients to be estimated is larger than sample size")
 
   # Penalty matrix
   D <- diag(K) # Diagonal matrix
@@ -554,7 +559,24 @@ gamlps <- function(formula, data, K = 30, family = c("gaussian", "poisson",
     else(cat("Newton-Raphson algorithm failed convergence"))
   }
 
-  newton <- NRaphson(rep(6,q))
+  NR.start <- rep(6, q)  # Newton-Raphson starting point
+  NR.counter <- 1        # Number of Newton-Raphson runs
+  NR.fail <- 0           # Indicator if Newton-Raphson fails
+
+  newton <- NRaphson(NR.start)
+
+  while (sum(abs(gradient(newton$voptim,
+                          Laplace(rep(0, H),newton$voptim))) < 0.5) != q) {
+    NR.start <- NR.start - 2
+    newton <- NRaphson(NR.start)
+    NR.counter <- NR.counter + 1
+    if (NR.counter >= 7) {
+      NR.fail <- 1
+      break
+    }
+  }
+  if(NR.fail == 1)
+    stop("Newton-Raphson did not converge")
 
   # Extracting info from newton
   L.approx <- newton$L.approx

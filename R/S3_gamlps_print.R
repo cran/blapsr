@@ -36,13 +36,17 @@ print.gamlps <- function(x, ...) {
   if(is.null(x$data)) {
     mf <- stats::model.frame(x$formula) # Extract model frame from formula
     X  <- stats::model.matrix(mf)     # Full design matrix
+    colXnames <- colnames(X)
     smterms <- grepl("sm(", colnames(X), fixed = TRUE)
     X <- cbind(X[, as.logical(1 - smterms)], X[, smterms])
+    colnames(X) <- colXnames
   } else{
     mf <- stats::model.frame(x$formula, data = x$data)
     X <- stats::model.matrix(mf, data = x$data)
+    colXnames <- colnames(X)
     smterms <- grepl("sm(", colnames(X), fixed = TRUE)
     X <- cbind(X[, as.logical(1 - smterms)], X[, smterms])
+    colnames(X) <- colXnames
   }
   q  <- x$q                    # Number of smooth terms in model
   p  <- ncol(X) - q   # Number of regression coefficients in linear part
@@ -66,7 +70,7 @@ print.gamlps <- function(x, ...) {
   cat("Number of B-splines in basis:", x$K, "\n")
   cat("Number of smooth terms:      ", x$q, "\n")
   cat("Penalty order:               ", x$penalty.order, "\n")
-  cat("Latent field dimension:      ", x$latfield.dim, "\n")
+  cat("Latent vector dimension:     ", x$latfield.dim, "\n")
   cat("Model degrees of freedom:    ",
       format(x$ED, nsmall = 2, digits = 2), "\n")
   cat("\n")
