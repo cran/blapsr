@@ -32,7 +32,7 @@
 #'  (log-)posterior penalty vector v is approximated by a multivariate Gaussian
 #'   and the routine shows the marginal distributions.
 #'
-#' @author Gressani Oswaldo \email{oswaldo_gressani@hotmail.fr}.
+#' @author Oswaldo Gressani \email{oswaldo_gressani@hotmail.fr}.
 #'
 #' @examples
 #' ### Classic simulated data example (with simgamdata)
@@ -56,7 +56,7 @@
 penaltyplot <- function(object, dimension, ...){
 
   # Print penalty plot for a coxlps object
-  if(class(object) == "coxlps"){
+  if(inherits(object, "coxlps")){
     # Extract required objects from the fit
     n <- object$n
     tlow <- 0
@@ -238,7 +238,7 @@ penaltyplot <- function(object, dimension, ...){
   }
 
   # Print penalty plot for a curelps object
-  else if(class(object) == "curelps"){
+  else if(inherits(object, "curelps")){
     # Extract required objects from the fit
     n <- object$n
     tlow <- 0
@@ -567,7 +567,7 @@ penaltyplot <- function(object, dimension, ...){
   }
 
   # Print penalty plot for a amlps or gamlps object
-  else if(class(object) == "amlps" || class(object) == "gamlps"){
+  else if(inherits(object, "amlps") || inherits(object, "gamlps")){
 
     if (missing(dimension))
       stop("A dimension vector needs to be specified")
